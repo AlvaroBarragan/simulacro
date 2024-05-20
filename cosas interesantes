@@ -1,0 +1,4 @@
+order: [
+        [{ model: Product, as: 'products' }, 'createdAt', 'DESC'],
+        // Using Sequelize.literal for virtual property ordering
+        [sequelize.literal(products.stock > 0), 'ASC']
