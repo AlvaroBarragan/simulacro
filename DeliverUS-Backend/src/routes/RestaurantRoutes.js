@@ -34,6 +34,16 @@ const loadFileRoutes = function (app) {
       RestaurantValidation.update,
       handleValidation,
       RestaurantController.update)
+  app.route('/restaurants/:restaurantId/changeStatus')
+    .patch(
+      isLoggedIn,
+      hasRole('owner'),
+      checkEntityExists(Restaurant, 'restaurantId'),
+      RestaurantMiddleware.checkRestaurantOwnership,
+      RestaurantMiddleware.restaurantOnlineOrOffline,
+      RestaurantMiddleware.restaurantNoDeliveredAt,
+      RestaurantController.changeStatus
+    )
     .delete(
       isLoggedIn,
       hasRole('owner'),

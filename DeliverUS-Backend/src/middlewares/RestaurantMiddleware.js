@@ -11,6 +11,33 @@ const checkRestaurantOwnership = async (req, res, next) => {
     return res.status(500).send(err)
   }
 }
+const restaurantOnlineOrOffline = async (req, res, next) => {
+  try {
+    const restaurant = await Restaurant.findByPk(req.params.restaurantId)
+    if (restaurant.status === 'online' || restaurant.status === 'offline') {
+      return next()
+    }
+    return res.status(409).send('Some orders belong to this restaurant.')
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
+}
+
+const restaurantNoDeliveredAt = async (req, res, next) => {
+  try {
+    const restaurant = await Restaurant.findByPk(req.params.restaurantId)
+    const delivered = await Order.count(
+      { where: { restaurantId: restaurant.id, deliveredAt: null } }
+    )
+    if (delivered === 0) {
+      return next()
+    } else {
+      return res.status(409).send('Some orders belong to this restaurant.')
+    }
+  } catch (err) {
+    return res.status(500).send(err)
+  }
+}
 const restaurantHasNoOrders = async (req, res, next) => {
   try {
     const numberOfRestaurantOrders = await Order.count({
@@ -25,4 +52,4 @@ const restaurantHasNoOrders = async (req, res, next) => {
   }
 }
 
-export { checkRestaurantOwnership, restaurantHasNoOrders }
+export { checkRestaurantOwnership, restaurantHasNoOrders, restaurantOnlineOrOffline, restaurantNoDeliveredAt }
