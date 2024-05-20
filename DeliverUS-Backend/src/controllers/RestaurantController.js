@@ -10,7 +10,7 @@ const index = async function (req, res) {
         model: RestaurantCategory,
         as: 'restaurantCategory'
       },
-        order: [[{ model: RestaurantCategory, as: 'restaurantCategory' }, 'name', 'ASC']]
+        order: [['promoted', 'DESC'], [{ model: RestaurantCategory, as: 'restaurantCategory' }, 'name', 'ASC']]
       }
     )
     res.json(restaurants)
@@ -28,7 +28,9 @@ const indexOwner = async function (req, res) {
         include: [{
           model: RestaurantCategory,
           as: 'restaurantCategory'
-        }]
+        }],
+        order: [['promoted', 'DESC'], [{ model: RestaurantCategory, as: 'restaurantCategory' }, 'name', 'ASC']]
+
       })
     res.json(restaurants)
   } catch (err) {
@@ -46,7 +48,21 @@ const create = async function (req, res) {
     res.status(500).send(err)
   }
 }
-
+const promote = async function (req, res) {
+  try {
+    const restaurantdem = await Restaurant.findOne({ where: { promoted: 1, userId: req.user.id } })
+    if (restaurantdem) {
+      restaurantdem.promoted = false
+      await restaurantdem.save()
+    }
+    const restaurantup = await Restaurant.findByPk(req.params.restaurantId)
+    restaurantup.promoted = true
+    const restaurant = await restaurantup.save()
+    res.json(restaurant)
+  } catch (err) {
+    res.status(500).send(err)
+  }
+}
 const show = async function (req, res) {
   // Only returns PUBLIC information of restaurants
   try {
@@ -101,6 +117,7 @@ const RestaurantController = {
   create,
   show,
   update,
-  destroy
+  destroy,
+  promote
 }
 export default RestaurantController
