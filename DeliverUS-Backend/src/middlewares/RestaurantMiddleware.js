@@ -11,6 +11,7 @@ const checkRestaurantOwnership = async (req, res, next) => {
     return res.status(500).send(err)
   }
 }
+
 const restaurantHasNoOrders = async (req, res, next) => {
   try {
     const numberOfRestaurantOrders = await Order.count({

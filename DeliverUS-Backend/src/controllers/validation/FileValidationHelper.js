@@ -16,6 +16,7 @@ const checkFileIsImage = (req, fieldName) => {
   }
   return true
 }
+
 const checkFileMaxSize = (req, fieldName, maxFileSize = defaultMaxFileSize) => {
   const file = checkFileExists(req, fieldName)
   if (file) {
