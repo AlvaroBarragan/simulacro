@@ -7,6 +7,7 @@ const index = async function (req, res) {
     res.status(500).send(err)
   }
 }
+
 const ProductCategoryController = {
   index
 }
